@@ -1,0 +1,30 @@
+<md-dialog>
+  <md-content>
+  <p>A button on your browser's bookmark bar will allow you to easily access match graphs from the official League of Legends Match History page. Follow these steps to add the bookmarklet:</p>
+    <md-list>
+      <md-item>
+      1. Click and drag the Creep Stats button (below) to your browser's bookmark bar.<br />
+      </md-item>
+      <md-item>
+      2. Visit the <a href="http://matchhistory.na.leagueoflegends.com">League of Legends Match History</a> page and log in.<br />
+      </md-item>
+      <md-item>
+      3. Click on one of your matches to view its detail.<br />
+      </md-item>
+      <md-item>
+      4. Click the Creep Stats bookmark on your bookmark bar.<br />
+      </md-item>
+    </md-list>
+    <p />
+    <div layout="row" layout-align="center center">
+      <md-button class="md-primary" href="javascript:try { location.href = 'http://lolmatchstats.speckledmonkey.com/#/'+location.href.match('#match-details/.*?/(\\d+)')[1]; } catch (err) { alert('Before clicking this bookmark, please navigate to the Match History page at http://www.leagueoflegends.com and click into a match\'s detail page.'); }">
+        Creep Stats
+      </md-button>
+    </div>
+  </md-content>
+  <div class="md-actions">
+    <md-button class="md-primary" ng-click="closeDialog()">
+      Close
+    </md-button>
+  </div>
+</md-dialog>

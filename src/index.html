@@ -2,7 +2,7 @@
 <html class="no-js" ng-app="matchstats">
   <head>
     <meta charset="utf-8">
-    <title>matchstats</title>
+    <title>League of Legends Match Statistics</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -51,6 +51,11 @@
     <script src="../bower_components/angular-aria/angular-aria.js"></script>
     <script src="../bower_components/hammerjs/hammer.js"></script>
     <script src="../bower_components/angular-material/angular-material.js"></script>
+    <script src="../bower_components/highcharts-standalone/standalone-framework.js"></script>
+    <script src="../bower_components/highcharts/highcharts.js"></script>
+    <script src="../bower_components/highcharts/highcharts-more.js"></script>
+    <script src="../bower_components/highcharts/modules/exporting.js"></script>
+    <script src="../bower_components/highcharts-ng/dist/highcharts-ng.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -58,6 +63,8 @@
     <!-- inject:js -->
     <script src="app/index.js"></script>
     <script src="components/navbar/navbar.controller.js"></script>
+    <script src="app/stats/stats.service.js"></script>
+    <script src="app/stats/stats.controller.js"></script>
     <script src="app/main/main.controller.js"></script>
     <!-- endinject -->
 

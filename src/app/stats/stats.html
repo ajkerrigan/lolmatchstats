@@ -1,0 +1,33 @@
+<div layout="vertical" layout-fill layout-align="center center">
+
+  <md-content class="md-padding">
+    <section>
+      <div layout="column" layout-align="center center">
+        <div layout="row" layout-align="center center">
+          <md-text-float class="md-primary" label="Game ID" ng-model="matchId"></md-text-float>
+          <md-button md-no-ink class="md-primary" ng-href="/#/{{matchId}}">
+            Get Stats
+          </md-button>
+          <md-button md-no-ink class="md-primary" ng-click="showBookmarkletDialog()">
+            Add Bookmarklet
+          </md-button>
+        </div>
+        <div ng-if="showChart">
+          <highchart ng-if="showChart" id="statsChart" config="chartConfig"></highchart>
+        </div>
+        <div ng-if="!showChart">
+          <md-card>
+            To see statistics for a League of Legends match:
+            <p>
+            1. Enter a Match ID in the box above and click the 'Get Stats' button.
+            <p>
+            OR
+            <p>
+            2. Click the 'Add Bookmarklet' button above and follow the instructions.
+          </md-card>
+        </div>
+      </div>
+    </section>
+  </md-content>
+
+</div>
