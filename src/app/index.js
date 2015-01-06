@@ -25,4 +25,7 @@ angular.module('matchstats', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router',
     $mdThemingProvider.theme('default')
       .primaryColor('light-blue');
   })
+  .config(function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|javascript):/);
+  })
 ;
