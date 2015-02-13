@@ -1,6 +1,6 @@
-(function (angular, undefined) {
+(function () {
   'use strict';
-  
+
   function statsService ($q, $http) {
     var statData = {};
 
@@ -34,4 +34,4 @@
   angular.module('matchstats')
     .factory('statsService', ['$q', '$http', statsService]);
 
-})(angular);
+})();

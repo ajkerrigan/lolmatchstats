@@ -1,27 +1,39 @@
-(function (angular, undefined) {
+(function () {
   'use strict';
 
-  function StatsCtrl ($scope, $log, $stateParams, $mdDialog, statsService) {
+  function StatsCtrl ($scope, $log, $stateParams, $mdDialog, cfService, statsService) {
 
-    function getMatchStats(matchId) {
-      $scope.chartConfig.series = [];
-      $scope.showChart = true;
-      $scope.chartConfig.loading = true;
+    function getMatchStats (matchId) {
+
+      function populateCreepScores (creepScore, frame) {
+        var champion = this;
+
+        cfService.add([{
+          champion: champion.championName,
+          team: (champion.teamId === 100 ? 'Blue' : 'Red'),
+          creepScore: creepScore,
+          time: frame
+        }]);
+      }
 
       statsService.getMatchStats(matchId).then(
         function (response) {
-          Object.keys(response.data.champions).forEach(function (id) {
-            $scope.chartConfig.series.push({
-              name: response.data.champions[id].championName,
-              data: response.data.creepStats[id]
-            });
-          });
-          $scope.chartConfig.loading = false;
+          cfService.clear();
+          for (var champId in response.data.creepStats) {
+            if (Array.isArray(response.data.creepStats[champId])) {
+              response.data.creepStats[champId].forEach(
+                populateCreepScores,
+                response.data.champions[champId]
+              );
+            }
+          }
+          $scope.statData = cfService.matchTimeDimension;
+          $scope.gameLength = response.data.creepStats['1'].length;
+          $scope.showChart = true;
         },
         function (response) {
           $log.error('Error loading match data.');
           $log.error(response);
-          $scope.chartConfig.loading = false;
         }
       );
     }
@@ -36,29 +48,17 @@
     $scope.showBookmarkletDialog = showBookmarkletDialog;
     $scope.matchId = $stateParams.matchId;
     $scope.showChart = false;
-
-    $scope.chartConfig = {
-      options: {
-        chart: {
-          type: 'line'
-        }
-      },
-      series: [],
-      title: {
-        text: 'Creep Score'
-      },
-      loading: false,
-      xAxis: {
-        currentMin: 0,
-        title: {
-          text: 'Match Time'
-        }
-      }
+    $scope.statData = undefined;
+    $scope.gameLength = 0;
+    $scope.dim = {
+      champTime: cfService.champTimeDimension
     };
-
+        
     if (typeof($stateParams.matchId) === 'number') {
       getMatchStats($stateParams.matchId);
     }
+
+    $scope.chartPostSetup = cfService.chartPostSetup;
 
   }
 
@@ -69,7 +69,7 @@
   }
 
   angular.module('matchstats')
-    .controller('StatsCtrl', ['$scope', '$log', '$stateParams', '$mdDialog', 'statsService', StatsCtrl])
+    .controller('StatsCtrl', ['$scope', '$log', '$stateParams', '$mdDialog', 'cfService', 'statsService', StatsCtrl])
     .controller('BookmarkletCtrl', ['$scope', '$mdDialog', BookmarkletCtrl]);
 
-})(angular);
+})();
