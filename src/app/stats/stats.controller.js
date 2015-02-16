@@ -10,6 +10,7 @@
 
         cfService.add([{
           champion: champion.championName,
+          lane: champion.lane,
           team: (champion.teamId === 100 ? 'Blue' : 'Red'),
           creepScore: creepScore,
           time: frame
@@ -28,7 +29,6 @@
             }
           }
           $scope.statData = cfService.matchTimeDimension;
-          $scope.gameLength = response.data.creepStats['1'].length;
           $scope.showChart = true;
         },
         function (response) {
@@ -49,17 +49,12 @@
     $scope.matchId = $stateParams.matchId;
     $scope.showChart = false;
     $scope.statData = undefined;
-    $scope.gameLength = 0;
-    $scope.dim = {
-      champTime: cfService.champTimeDimension
-    };
+    $scope.dim = cfService.dim;
+    $scope.chartPostSetup = cfService.chartPostSetup;
         
     if (typeof($stateParams.matchId) === 'number') {
       getMatchStats($stateParams.matchId);
     }
-
-    $scope.chartPostSetup = cfService.chartPostSetup;
-
   }
 
   function BookmarkletCtrl ($scope, $mdDialog) {

@@ -12,7 +12,8 @@
             Add Bookmarklet
           </md-button>
         </div>
-        <div ng-if="showChart" dc-chart="seriesChart" dc-dimension="dim.champTime" dc-group="1" dc-x="d3.scale.linear().domain([0,gameLength])" dc-post-setup-chart="chartPostSetup"></div>
+        <div ng-if="showChart" dc-chart="lineChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.teamCs" id="team-cs-chart"></div>
+        <div ng-if="showChart" dc-chart="seriesChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.championCs" id="champ-cs-chart"></div>
         </div>
         <div ng-if="!showChart">
           <md-card>
