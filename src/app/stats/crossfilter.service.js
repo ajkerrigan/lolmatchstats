@@ -10,6 +10,16 @@
     var charts = {};
     exports.dim = {};
     exports.chartPostSetup = {};
+    exports.champFilters = [];
+
+    function styleSelectedChamps () {
+      d3.selectAll('.dc-legend-item text')
+      .filter(function (d) {
+        return (exports.champFilters.indexOf(d.name) !== -1);
+      })
+      .style('font-weight', 'bolder')
+      .style('fill', 'blue');
+    }
 
     exports.add = function (data) {
       cf.add(data);
@@ -25,6 +35,10 @@
 
     exports.dim.time = cf.dimension(function (d) {
       return d.time;
+    });
+
+    exports.dim.champ = cf.dimension(function (d) {
+      return '('+ d.team +') '+ d.champion;
     });
 
     exports.dim.champTime = cf.dimension(function (d) {
@@ -52,6 +66,10 @@
 
     exports.dim.lane = cf.dimension(function (d) {
       return d.lane;
+    });
+
+    exports.dim.champLane = cf.dimension(function (d) {
+      return ['('+ d.team +') '+ d.champion, d.lane];
     });
 
     exports.chartPostSetup.championCs = function (chart) {
@@ -91,12 +109,37 @@
         top: 50,
         bottom: 50
       });
+      chart.on('renderlet', function () {
+        d3.selectAll('.dc-legend-item').on('click', function (legendItem) {
+          var filterPosition = exports.champFilters.indexOf(legendItem.name);
+          if (filterPosition !== -1) {
+            exports.champFilters.splice(filterPosition, 1);
+          }
+          else {
+            exports.champFilters.push(legendItem.name);
+          }
+          if (exports.champFilters.length > 0) {
+            exports.dim.champLane.filter(function (d) {
+              return (exports.champFilters.indexOf(d[0]) !== -1);
+            });
+          }
+          else {
+            exports.dim.champLane.filterAll();
+          }
+          exports.redrawAll();
+        });
+      });
       charts.championCs = chart;
     };
 
     exports.chartPostSetup.teamCs = function (chart) {
       chart.width(800);
       chart.height(200);
+      chart.ordinalColors(['red','blue']);
+      chart.colorDomain([0,1]);
+      chart.colorAccessor(function (d) {
+        return (d.value < 0 ? 0 : 1);
+      });
       chart.group(exports.timeGroup);
       chart.keyAccessor(function (d) {
         return d.key;
@@ -108,13 +151,11 @@
         return Math.abs(v);
       });
       chart.x(d3.scale.linear().domain([0,exports.dim.time.group().size()-1]));
-      chart.yAxisLabel('Creep Advantage');
+      chart.yAxisLabel('Team Advantage');
       chart.xAxisLabel('Match Time (Minutes)');
       chart.elasticY(true);
       chart.renderVerticalGridLines(true);
       chart.round(Math.round);
-      chart.renderDataPoints(true);
-      chart.interpolate('basis');
       chart.margins({
         left: 50,
         right: 0,
@@ -131,6 +172,14 @@
       });
       charts.teamCs = chart;
     };
+
+    exports.redrawAll = function () {
+      d3.selectAll('.dc-legend').remove();
+      dc.redrawAll();
+      styleSelectedChamps();
+    };
+
+    exports.charts = charts;
 
     return exports;
   }

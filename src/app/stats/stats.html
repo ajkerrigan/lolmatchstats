@@ -5,15 +5,34 @@
       <div layout="column" layout-align="center center">
         <div layout="row" layout-align="center center">
           <md-text-float class="md-primary" label="Game ID" ng-model="matchId"></md-text-float>
-          <md-button md-no-ink class="md-primary" ng-href="/#/{{matchId}}">
+          <md-button md-no-ink class="md-primary" ng-href="/#/{{matchId}}" ng-click="cfService.redrawAll()">
             Get Stats
           </md-button>
           <md-button md-no-ink class="md-primary" ng-click="showBookmarkletDialog()">
             Add Bookmarklet
           </md-button>
         </div>
-        <div ng-if="showChart" dc-chart="lineChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.teamCs" id="team-cs-chart"></div>
-        <div ng-if="showChart" dc-chart="seriesChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.championCs" id="champ-cs-chart"></div>
+        <div ng-if="showChart" layout="column" layout-align="center center">
+          <div layout="row" layout-align="center center">
+            Filter by Lane:
+            <md-button md-no-ink class="md-secondary" ng-click="filterLane()">
+              All
+            </md-button>
+            <md-button md-no-ink class="md-secondary" ng-click="filterLane('TOP')">
+              Top
+            </md-button>
+            <md-button md-no-ink class="md-secondary" ng-click="filterLane('MIDDLE')">
+              Middle
+            </md-button>
+            <md-button md-no-ink class="md-secondary" ng-click="filterLane('BOTTOM')">
+              Bottom
+            </md-button>
+            <md-button md-no-ink class="md-secondary" ng-click="filterLane('JUNGLE')">
+              Jungle
+            </md-button>
+         </div>
+          <div dc-chart="barChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.teamCs" id="team-cs-chart"></div>
+          <div dc-chart="seriesChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.championCs" id="champ-cs-chart"></div>
         </div>
         <div ng-if="!showChart">
           <md-card>

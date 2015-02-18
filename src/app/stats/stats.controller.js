@@ -3,6 +3,26 @@
 
   function StatsCtrl ($scope, $log, $stateParams, $mdDialog, cfService, statsService) {
 
+    $scope.filterLane = function filterLane (lane) {
+      if (lane) {
+        cfService.champFilters = cfService.dim.champLane.group().all()
+        .filter(function (champ) {
+          return champ.key[1] === lane;
+        })
+        .map(function (champ) {
+          return champ.key[0];
+        });
+        cfService.dim.champLane.filter(function (d) {
+          return (cfService.champFilters.indexOf(d[0]) !== -1);
+        });
+      }
+      else {
+        cfService.champFilters = [];
+        cfService.dim.champLane.filterAll();
+      }
+      cfService.redrawAll();
+    };
+
     function getMatchStats (matchId) {
 
       function populateCreepScores (creepScore, frame) {
@@ -17,9 +37,14 @@
         }]);
       }
 
+      if (cfService.charts.teamCs) {
+        cfService.charts.teamCs.focus();
+      }
+      $scope.filterLane();
+      cfService.clear();
+
       statsService.getMatchStats(matchId).then(
         function (response) {
-          cfService.clear();
           for (var champId in response.data.creepStats) {
             if (Array.isArray(response.data.creepStats[champId])) {
               response.data.creepStats[champId].forEach(
