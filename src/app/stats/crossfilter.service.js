@@ -8,6 +8,7 @@
     var exports = {};
     var cf = crossfilter();
     var charts = {};
+    var _chartByStat = 'creepScore';
     exports.dim = {};
     exports.chartPostSetup = {};
     exports.champFilters = [];
@@ -20,6 +21,26 @@
       .style('font-weight', 'bolder')
       .style('fill', 'blue');
     }
+
+    exports.chartBy = function (stat) {
+      if (!stat) {
+        return _chartByStat;
+      }
+      else {
+        _chartByStat = stat;
+        charts.teamCs.group(timeGroup());
+        charts.championCs.group(champTimeGroup());
+        switch (stat) {
+          case 'creepScore':
+            charts.championCs.yAxisLabel('Creep Score');
+            break;
+          case 'totalGold':
+            charts.championCs.yAxisLabel('Gold Income');
+            break;
+        }
+        exports.redrawAll();
+      }
+    };
 
     exports.add = function (data) {
       cf.add(data);
@@ -44,25 +65,53 @@
     exports.dim.champTime = cf.dimension(function (d) {
       return ['('+ d.team +') '+ d.champion, d.time];
     });
-    exports.champTimeGroup = exports.dim.champTime.group().reduceSum(
+    function champTimeGroup () {
+      return exports.dim.champTime.group().reduceSum(
       function (d) {
-        return d.creepScore;
+        var value;
+        switch (_chartByStat) {
+          case 'creepScore':
+            value = d.creepScore;
+            break;
+          case 'totalGold':
+            value = d.totalGold;
+            break;
+        }
+        return value;
       }
     );
+    }
 
-    exports.timeGroup = exports.dim.time.group().reduce(
-      function (p, v) {
-        p += (v.team === 'Blue' ? v.creepScore : -v.creepScore);
-        return p;
-      },
-      function (p, v) {
-        p -= (v.team === 'Blue' ? v.creepScore : -v.creepScore);
-        return p;
-      },
-      function () {
-        return 0;
-      }
-    );
+    function timeGroup () {
+      return exports.dim.time.group().reduce(
+        function (p, v) {
+          switch (_chartByStat) {
+            case 'creepScore':
+              p += (v.team === 'Blue' ? v.creepScore : -v.creepScore);
+              break;
+            case 'totalGold':
+              p += (v.team === 'Blue' ? v.totalGold : -v.totalGold);
+              break;
+          }
+          return p;
+        },
+        function (p, v) {
+          switch (_chartByStat) {
+            case 'creepScore':
+              p -= (v.team === 'Blue' ? v.creepScore : -v.creepScore);
+              break;
+            case 'totalGold':
+              p -= (v.team === 'Blue' ? v.totalGold : -v.totalGold);
+              break;
+
+          }
+          return p;
+        },
+        function () {
+          return 0;
+        }
+      );
+    }
 
     exports.dim.lane = cf.dimension(function (d) {
       return d.lane;
@@ -81,7 +130,7 @@
       });
       chart.width(800);
       chart.height(300);
-      chart.group(exports.champTimeGroup);
+      chart.group(champTimeGroup());
       chart.seriesAccessor(function (d) {
         return d.key[0];
       });
@@ -104,7 +153,7 @@
       chart.round(Math.round);
       chart.brushOn(false);
       chart.margins({
-        left: 50,
+        left: 60,
         right: 0,
         top: 50,
         bottom: 50
@@ -140,7 +189,7 @@
       chart.colorAccessor(function (d) {
         return (d.value < 0 ? 0 : 1);
       });
-      chart.group(exports.timeGroup);
+      chart.group(timeGroup());
       chart.keyAccessor(function (d) {
         return d.key;
       });
@@ -148,7 +197,7 @@
         return d.value;
       });
       chart.yAxis().tickFormat(function (v) {
-        return Math.abs(v);
+        return d3.format(',.0f')(Math.abs(v));
       });
       chart.x(d3.scale.linear().domain([0,exports.dim.time.group().size()-1]));
       chart.yAxisLabel('Team Advantage');
@@ -157,7 +206,7 @@
       chart.renderVerticalGridLines(true);
       chart.round(Math.round);
       chart.margins({
-        left: 50,
+        left: 60,
         right: 0,
         top: 50,
         bottom: 50

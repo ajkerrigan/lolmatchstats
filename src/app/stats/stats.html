@@ -14,6 +14,15 @@
         </div>
         <div ng-if="showChart" layout="column" layout-align="center center">
           <div layout="row" layout-align="center center">
+            Choose a Statistic:
+            <md-button md-no-ink class="md-secondary" ng-click="setChartBy('creepScore')">
+              Creep Score
+            </md-button>
+            <md-button md-no-ink class="md-secondary" ng-click="setChartBy('totalGold')">
+              Gold Income
+            </md-button>
+          </div>
+          <div layout="row" layout-align="center center">
             Filter by Lane:
             <md-button md-no-ink class="md-secondary" ng-click="filterLane()">
               All

@@ -23,19 +23,11 @@
       cfService.redrawAll();
     };
 
+    $scope.setChartBy = function setChartBy (stat) {
+      cfService.chartBy(stat);
+    };
+
     function getMatchStats (matchId) {
-
-      function populateCreepScores (creepScore, frame) {
-        var champion = this;
-
-        cfService.add([{
-          champion: champion.championName,
-          lane: champion.lane,
-          team: (champion.teamId === 100 ? 'Blue' : 'Red'),
-          creepScore: creepScore,
-          time: frame
-        }]);
-      }
 
       if (cfService.charts.teamCs) {
         cfService.charts.teamCs.focus();
@@ -45,12 +37,22 @@
 
       statsService.getMatchStats(matchId).then(
         function (response) {
-          for (var champId in response.data.creepStats) {
-            if (Array.isArray(response.data.creepStats[champId])) {
-              response.data.creepStats[champId].forEach(
-                populateCreepScores,
-                response.data.champions[champId]
-              );
+          for (var champId in response.data.timeStats.creepScore) {
+            var champInfo = response.data.champions[champId];
+            if (response.data.timeStats.creepScore[champId] instanceof Array) {
+              cfService.add(response.data.timeStats.creepScore[champId].map(
+                function (creepScore, frame) {
+                  var record = {
+                    champion: champInfo.championName,
+                    lane: champInfo.lane,
+                    team: (champInfo.teamId === 100 ? 'Blue' : 'Red'),
+                    creepScore: creepScore,
+                    totalGold: response.data.timeStats.totalGold[champId][frame],
+                    time: frame
+                  };
+                  return record;
+                }
+              ));
             }
           }
           $scope.statData = cfService.matchTimeDimension;
