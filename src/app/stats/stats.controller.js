@@ -3,37 +3,10 @@
 
   function StatsCtrl ($scope, $log, $stateParams, $mdDialog, cfService, statsService) {
 
-    $scope.filterLane = function filterLane (lane) {
-      if (lane) {
-        cfService.champFilters = cfService.dim.champLane.group().all()
-        .filter(function (champ) {
-          return champ.key[1] === lane;
-        })
-        .map(function (champ) {
-          return champ.key[0];
-        });
-        cfService.dim.champLane.filter(function (d) {
-          return (cfService.champFilters.indexOf(d[0]) !== -1);
-        });
-      }
-      else {
-        cfService.champFilters = [];
-        cfService.dim.champLane.filterAll();
-      }
-      cfService.redrawAll();
-    };
-
-    $scope.setChartBy = function setChartBy (stat) {
-      cfService.chartBy(stat);
-    };
-
     function getMatchStats (matchId) {
 
-      if (cfService.charts.teamCs) {
-        cfService.charts.teamCs.focus();
-      }
-      $scope.filterLane();
-      cfService.clear();
+      cfService.clearFilters();
+      cfService.clearData();
 
       statsService.getMatchStats(matchId).then(
         function (response) {
@@ -55,7 +28,6 @@
               ));
             }
           }
-          $scope.statData = cfService.matchTimeDimension;
           $scope.showChart = true;
         },
         function (response) {
@@ -72,10 +44,11 @@
       });
     }
 
+    $scope.filterLane = cfService.filterLane;
+    $scope.setChartBy = cfService.chartBy;
     $scope.showBookmarkletDialog = showBookmarkletDialog;
     $scope.matchId = $stateParams.matchId;
     $scope.showChart = false;
-    $scope.statData = undefined;
     $scope.dim = cfService.dim;
     $scope.chartPostSetup = cfService.chartPostSetup;
         

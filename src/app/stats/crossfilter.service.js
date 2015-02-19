@@ -9,6 +9,8 @@
     var cf = crossfilter();
     var charts = {};
     var _chartByStat = 'creepScore';
+    var _champTimeGroup = {};
+    var _timeGroup = {};
     exports.dim = {};
     exports.chartPostSetup = {};
     exports.champFilters = [];
@@ -42,11 +44,38 @@
       }
     };
 
+    exports.filterLane = function filterLane (lane) {
+      if (lane) {
+        exports.champFilters = exports.dim.champLane.group().all()
+        .filter(function (champ) {
+          return champ.key[1] === lane;
+        })
+        .map(function (champ) {
+          return champ.key[0];
+        });
+        exports.dim.champLane.filter(function (d) {
+          return (exports.champFilters.indexOf(d[0]) !== -1);
+        });
+      }
+      else {
+        exports.champFilters = [];
+        exports.dim.champLane.filterAll();
+      }
+      exports.redrawAll();
+    };
+
+    exports.clearFilters = function clearFilters () {
+      if (charts.teamCs) {
+        charts.teamCs.focus();
+      }
+      exports.filterLane();
+    };
+
     exports.add = function (data) {
       cf.add(data);
     };
 
-    exports.clear = function () {
+    exports.clearData = function () {
       cf.remove();
     };
 
@@ -58,16 +87,14 @@
       return d.time;
     });
 
-    exports.dim.champ = cf.dimension(function (d) {
-      return '('+ d.team +') '+ d.champion;
-    });
-
     exports.dim.champTime = cf.dimension(function (d) {
       return ['('+ d.team +') '+ d.champion, d.time];
     });
     function champTimeGroup () {
-      return exports.dim.champTime.group().reduceSum(
-      function (d) {
+      if (_champTimeGroup.hasOwnProperty('dispose')) {
+        _champTimeGroup.dispose();
+      }
+      _champTimeGroup = exports.dim.champTime.group().reduceSum(function (d) {
         var value;
         switch (_chartByStat) {
           case 'creepScore':
@@ -78,12 +105,15 @@
             break;
         }
         return value;
-      }
-    );
+      });
+      return _champTimeGroup;
     }
 
     function timeGroup () {
-      return exports.dim.time.group().reduce(
+      if (_timeGroup.hasOwnProperty('dispose')) {
+        _timeGroup.dispose();
+      }
+      _timeGroup = exports.dim.time.group().reduce(
         function (p, v) {
           switch (_chartByStat) {
             case 'creepScore':
@@ -111,6 +141,7 @@
           return 0;
         }
       );
+      return _timeGroup;
     }
 
     exports.dim.lane = cf.dimension(function (d) {
