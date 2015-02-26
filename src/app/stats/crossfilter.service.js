@@ -179,7 +179,7 @@
       chart.renderHorizontalGridLines(true);
       chart.renderVerticalGridLines(true);
       chart.title(function (d) {
-        return d.key[0] +' @'+ d.key[1] +' mins: '+ d.value +' CS';
+        return d.key[0] +' '+ chart.yAxisLabel() +' at '+ d.key[1] +' mins: '+ d3.format(',.0f')(d.value);
       });
       chart.round(Math.round);
       chart.brushOn(false);
@@ -191,6 +191,11 @@
       });
       chart.on('renderlet', function () {
         d3.selectAll('.dc-legend-item').on('click', function (legendItem) {
+
+          // When clicking on a champion in the legend, toggle inclusion
+          // in the champion filter list. Then, filter the dataset appropriately
+          // (clearing all filters if the filter list is empty).
+
           var filterPosition = exports.champFilters.indexOf(legendItem.name);
           if (filterPosition !== -1) {
             exports.champFilters.splice(filterPosition, 1);
