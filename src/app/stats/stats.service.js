@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function statsService ($q, $http) {
+  function statsService ($q, $http, apiEndpoint) {
     var statData = {};
 
     return {
@@ -10,7 +10,7 @@
 
         $http({
           method: 'GET',
-          url: 'http://lolmatchstats.herokuapp.com/api/match/' + matchId
+          url: [apiEndpoint, 'api', 'match', matchId].join('/')
         })
           .then(
             function (response) {
@@ -32,6 +32,6 @@
   }
 
   angular.module('matchstats')
-    .factory('statsService', ['$q', '$http', statsService]);
+    .factory('statsService', ['$q', '$http', 'apiEndpoint', statsService]);
 
 })();

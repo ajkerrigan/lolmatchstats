@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('matchstats', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ngMaterial', 'angularDc'])
+angular.module('matchstats', ['matchstats.config', 'ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ngMaterial', 'angularDc'])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('default', {

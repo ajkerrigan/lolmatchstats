@@ -48,13 +48,33 @@ gulp.task('injector:css', ['styles'], function () {
     .pipe(gulp.dest('src/'));
 });
 
+gulp.task('constants', function () {
+  var environment = process.env.NODE_ENV === 'PROD' ?
+    'production' : 'development';
+  var myConfig = require('../config.json');
+  var envConfig = myConfig[(
+    process.env.NODE_ENV === 'PROD' ? 'production' : 'development'
+  )];
+
+  console.log('Writing application constants based on NODE_ENV =',
+    process.env.NODE_ENV);
+  console.log('Environment set to:', environment);
+  console.log(envConfig);
+
+  return $.ngConstant({
+    name: 'matchstats.config',
+    constants: envConfig,
+    stream: true
+  }).pipe(gulp.dest('src/app/'));
+});
+
 gulp.task('scripts', function () {
   return gulp.src('src/{app,components}/**/*.js')
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('injector:js', ['scripts', 'injector:css'], function () {
+gulp.task('injector:js', ['constants', 'scripts', 'injector:css'], function () {
   return gulp.src('src/index.html')
     .pipe($.inject(gulp.src([
       'src/{app,components}/**/*.js',
@@ -138,7 +158,7 @@ gulp.task('misc', function () {
 });
 
 gulp.task('clean', function (done) {
-  $.del(['dist/', '.tmp/'], done);
+  $.del(['dist/', '.tmp/', 'src/app/constants.js'], done);
 });
 
 gulp.task('build', ['html', 'images', 'fonts', 'misc']);

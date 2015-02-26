@@ -1,0 +1,8 @@
+{
+  "production": {
+    "apiEndpoint": "https://lolmatchstats.herokuapp.com"
+  },
+  "development": {
+    "apiEndpoint": "http://localhost:3000"
+  }
+}
