@@ -5,12 +5,16 @@
     var statData = {};
 
     return {
-      getMatchStats: function _getMatchStats (matchId) {
+      getMatchStats: function _getMatchStats (region, matchId) {
         var deferred = $q.defer();
+        var urlComponents = [apiEndpoint, 'api', 'match', matchId];
+        if (region) {
+          urlComponents.splice(3,0,region);
+        }
 
         $http({
           method: 'GET',
-          url: [apiEndpoint, 'api', 'match', matchId].join('/')
+          url: urlComponents.join('/')
         })
           .then(
             function (response) {

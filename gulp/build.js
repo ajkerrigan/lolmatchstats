@@ -52,18 +52,20 @@ gulp.task('constants', function () {
   var environment = process.env.NODE_ENV === 'PROD' ?
     'production' : 'development';
   var myConfig = require('../config.json');
-  var envConfig = myConfig[(
+  var envEndpoint = myConfig.apiEndpoint[(
     process.env.NODE_ENV === 'PROD' ? 'production' : 'development'
   )];
 
   console.log('Writing application constants based on NODE_ENV =',
     process.env.NODE_ENV);
   console.log('Environment set to:', environment);
-  console.log(envConfig);
 
   return $.ngConstant({
     name: 'matchstats.config',
-    constants: envConfig,
+    constants: {
+      'apiEndpoint': envEndpoint,
+      'regions': myConfig.regions
+    },
     stream: true
   }).pipe(gulp.dest('src/app/'));
 });

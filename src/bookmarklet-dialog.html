@@ -17,7 +17,7 @@
     </md-list>
     <p />
     <div layout="row" layout-align="center center">
-      <md-button md-no-ink class="md-primary" href="javascript:try { location.href = 'http://lolmatchstats.speckledmonkey.com/#/'+location.href.match('#match-details/.*?/(\\d+)')[1]; } catch (err) { alert('Before clicking this bookmark, please navigate to the Match History page at http://www.leagueoflegends.com and click into a match\'s detail page.'); }">
+      <md-button md-no-ink class="md-primary" href="javascript:(function() { try { var matches = location.href.match('matchhistory\\.(\\w+)\\.leagueoflegends\\.com.*?#match-details/.*?/(\\d+)'); location.href = 'http://lolmatchstats.speckledmonkey.com/#/'+matches[1]+'/'+matches[2]; } catch (err) { alert('Before clicking this bookmark, please navigate to the Match History page at http://www.leagueoflegends.com and click into a match\'s detail page.'); } })()">
         LoL Match Stats
       </md-button>
     </div>

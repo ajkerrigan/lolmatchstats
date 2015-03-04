@@ -8,6 +8,11 @@ angular.module('matchstats', ['matchstats.config', 'ngAnimate', 'ngTouch', 'ngSa
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl'
       })
+      .state('statsWithRegionAndMatch', {
+        url: '/{region}/{matchId:int}',
+        templateUrl: 'app/stats/stats.html',
+        controller: 'StatsCtrl'
+      })
       .state('statsWithMatch', {
         url: '/{matchId:int}',
         templateUrl: 'app/stats/stats.html',
@@ -23,7 +28,7 @@ angular.module('matchstats', ['matchstats.config', 'ngAnimate', 'ngTouch', 'ngSa
   })
   .config(function ($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-      .primaryColor('light-blue');
+      .primaryPalette('light-blue');
   })
   .config(function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|javascript):/);

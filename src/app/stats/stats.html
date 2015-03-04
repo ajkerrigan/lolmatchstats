@@ -3,9 +3,21 @@
   <md-content class="md-padding">
     <section>
       <div layout="column" layout-align="center center">
-        <div layout="row" layout-align="center center">
-          <md-text-float class="md-primary" label="Game ID" ng-model="matchId"></md-text-float>
-          <md-button md-no-ink class="md-primary" ng-href="/#/{{matchId}}" ng-click="cfService.redrawAll()">
+        <div layout="row" layout-align="center center" layout-padding>
+          <md-select ng-model="match.region" id="region-select">
+          <md-select-label>{{ match.region || "Choose a Region" }}</md-select-label>
+            <md-option md-no-ink ng-repeat="opt in regions" ng-value="opt">
+              {{ opt }}
+            </md-option>
+          </md-select>
+          <md-input-container flex>
+            <label>Game ID</label>
+            <input type="text" ng-model="match.id">
+          </md-input-container>
+          <md-button md-no-ink class="md-primary"
+            ng-disabled="!(match.region && match.id)"
+            ng-href="/#/{{ match.region }}/{{ match.id }}"
+            ng-click="cfService.redrawAll()">
             Get Stats
           </md-button>
           <md-button md-no-ink class="md-primary" ng-click="showBookmarkletDialog()">
@@ -43,8 +55,8 @@
           <div dc-chart="barChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.teamCs" id="team-cs-chart"></div>
           <div dc-chart="seriesChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.championCs" id="champ-cs-chart"></div>
         </div>
-        <div ng-if="!showChart">
-          <md-card>
+        <div ng-if="!showChart" layout="column" layout-align="center center" layout-padding>
+          <md-card flex>
             To see statistics for a League of Legends match:
             <p>
             1. Enter a Match ID in the box above and click the 'Get Stats' button.

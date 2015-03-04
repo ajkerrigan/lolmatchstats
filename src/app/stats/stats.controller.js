@@ -1,14 +1,14 @@
 (function () {
   'use strict';
 
-  function StatsCtrl ($scope, $log, $stateParams, $mdDialog, cfService, statsService) {
+  function StatsCtrl ($scope, $log, $stateParams, $mdDialog, cfService, statsService, regions) {
 
-    function getMatchStats (matchId) {
+    function getMatchStats (region, matchId) {
 
       cfService.clearFilters();
       cfService.clearData();
 
-      statsService.getMatchStats(matchId).then(
+      statsService.getMatchStats(region, matchId).then(
         function (response) {
           for (var champId in response.data.timeStats.creepScore) {
             var champInfo = response.data.champions[champId];
@@ -47,13 +47,19 @@
     $scope.filterLane = cfService.filterLane;
     $scope.setChartBy = cfService.chartBy;
     $scope.showBookmarkletDialog = showBookmarkletDialog;
-    $scope.matchId = $stateParams.matchId;
+    $scope.match = { 'id': $stateParams.matchId };
     $scope.showChart = false;
     $scope.dim = cfService.dim;
     $scope.chartPostSetup = cfService.chartPostSetup;
+    $scope.regions = regions;
+
+    if (typeof($stateParams.region) === 'string' &&
+        regions.indexOf($stateParams.region.toUpperCase()) !== -1) {
+      $scope.match.region = $stateParams.region.toUpperCase();
+    }
         
     if (typeof($stateParams.matchId) === 'number') {
-      getMatchStats($stateParams.matchId);
+      getMatchStats($stateParams.region, $stateParams.matchId);
     }
   }
 
@@ -64,7 +70,7 @@
   }
 
   angular.module('matchstats')
-    .controller('StatsCtrl', ['$scope', '$log', '$stateParams', '$mdDialog', 'cfService', 'statsService', StatsCtrl])
+    .controller('StatsCtrl', ['$scope', '$log', '$stateParams', '$mdDialog', 'cfService', 'statsService', 'regions', StatsCtrl])
     .controller('BookmarkletCtrl', ['$scope', '$mdDialog', BookmarkletCtrl]);
 
 })();
