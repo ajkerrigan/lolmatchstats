@@ -27,31 +27,23 @@
         <div ng-if="showChart" layout="column" layout-align="center center">
           <div layout="row" layout-align="center center">
             Choose a Statistic:
-            <md-button md-no-ink class="md-secondary" ng-click="setChartBy('creepScore')">
-              Creep Score
-            </md-button>
-            <md-button md-no-ink class="md-secondary" ng-click="setChartBy('totalGold')">
-              Gold Income
-            </md-button>
+            <div ng-repeat="stat in stats" layout-padding>
+              <md-button md-no-ink class="md-raised"
+               ng-class="{'md-primary': activeStat === stat }" flex
+               ng-click="setChartBy(stat)">
+               {{ stat }}
+              </md-button>
+            </div>
           </div>
           <div layout="row" layout-align="center center">
             Filter by Lane:
-            <md-button md-no-ink class="md-secondary" ng-click="filterLane()">
-              All
-            </md-button>
-            <md-button md-no-ink class="md-secondary" ng-click="filterLane('TOP')">
-              Top
-            </md-button>
-            <md-button md-no-ink class="md-secondary" ng-click="filterLane('MIDDLE')">
-              Middle
-            </md-button>
-            <md-button md-no-ink class="md-secondary" ng-click="filterLane('BOTTOM')">
-              Bottom
-            </md-button>
-            <md-button md-no-ink class="md-secondary" ng-click="filterLane('JUNGLE')">
-              Jungle
-            </md-button>
-         </div>
+            <div ng-repeat="lane in laneFilters" layout-padding>
+              <md-button md-no-ink ng-click="filterLane(lane)" class="md-raised"
+              ng-class="{'md-primary': activeLaneFilter === lane && !isFilteredByChampion() }" flex>
+                {{ lane }}
+              </md-button>
+            </div>
+          </div>
           <div dc-chart="barChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.teamCs" id="team-cs-chart"></div>
           <div dc-chart="seriesChart" dc-dimension="dim.time" dc-group="1" dc-post-setup-chart="chartPostSetup.championCs" id="champ-cs-chart"></div>
         </div>

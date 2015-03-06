@@ -44,8 +44,18 @@
       });
     }
 
-    $scope.filterLane = cfService.filterLane;
-    $scope.setChartBy = cfService.chartBy;
+    $scope.activeLaneFilter = 'ALL';
+    $scope.activeStat = 'Creep Score';
+    $scope.stats = [ 'Creep Score', 'Gold Income' ];
+    $scope.laneFilters = [ 'ALL', 'TOP', 'MIDDLE', 'BOTTOM', 'JUNGLE' ];
+    $scope.filterLane = function (lane) {
+      $scope.activeLaneFilter = lane;
+      return cfService.filterLane(lane);
+    };
+    $scope.setChartBy = function (stat) {
+      $scope.activeStat = stat;
+      return cfService.chartBy(stat);
+    };
     $scope.showBookmarkletDialog = showBookmarkletDialog;
     $scope.match = { 'id': $stateParams.matchId };
     $scope.showChart = false;

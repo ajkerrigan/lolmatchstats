@@ -8,7 +8,7 @@
     var exports = {};
     var cf = crossfilter();
     var charts = {};
-    var _chartByStat = 'creepScore';
+    var _chartByStat = 'Creep Score';
     var _champTimeGroup = {};
     var _timeGroup = {};
     exports.dim = {};
@@ -32,20 +32,13 @@
         _chartByStat = stat;
         charts.teamCs.group(timeGroup());
         charts.championCs.group(champTimeGroup());
-        switch (stat) {
-          case 'creepScore':
-            charts.championCs.yAxisLabel('Creep Score');
-            break;
-          case 'totalGold':
-            charts.championCs.yAxisLabel('Gold Income');
-            break;
-        }
+        charts.championCs.yAxisLabel(stat);
         exports.redrawAll();
       }
     };
 
     exports.filterLane = function filterLane (lane) {
-      if (lane) {
+      if (lane !== 'ALL') {
         exports.champFilters = exports.dim.champLane.group().all()
         .filter(function (champ) {
           return champ.key[1] === lane;
@@ -68,7 +61,7 @@
       if (charts.teamCs) {
         charts.teamCs.focus();
       }
-      exports.filterLane();
+      exports.filterLane('ALL');
     };
 
     exports.add = function (data) {
@@ -97,10 +90,10 @@
       _champTimeGroup = exports.dim.champTime.group().reduceSum(function (d) {
         var value;
         switch (_chartByStat) {
-          case 'creepScore':
+          case 'Creep Score':
             value = d.creepScore;
             break;
-          case 'totalGold':
+          case 'Gold Income':
             value = d.totalGold;
             break;
         }
@@ -116,10 +109,10 @@
       _timeGroup = exports.dim.time.group().reduce(
         function (p, v) {
           switch (_chartByStat) {
-            case 'creepScore':
+            case 'Creep Score':
               p += (v.team === 'Blue' ? v.creepScore : -v.creepScore);
               break;
-            case 'totalGold':
+            case 'Gold Income':
               p += (v.team === 'Blue' ? v.totalGold : -v.totalGold);
               break;
           }
@@ -127,10 +120,10 @@
         },
         function (p, v) {
           switch (_chartByStat) {
-            case 'creepScore':
+            case 'Creep Score':
               p -= (v.team === 'Blue' ? v.creepScore : -v.creepScore);
               break;
-            case 'totalGold':
+            case 'Gold Income':
               p -= (v.team === 'Blue' ? v.totalGold : -v.totalGold);
               break;
 
@@ -197,6 +190,7 @@
           // (clearing all filters if the filter list is empty).
 
           var filterPosition = exports.champFilters.indexOf(legendItem.name);
+
           if (filterPosition !== -1) {
             exports.champFilters.splice(filterPosition, 1);
           }
