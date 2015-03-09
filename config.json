@@ -3,16 +3,46 @@
     "production": "https://lolmatchstats.herokuapp.com",
     "development": "http://localhost:3000"
   },
-  "regions": [
-    "BR",
-    "EUNE",
-    "EUW",
-    "KR",
-    "LAN",
-    "LAS",
-    "NA",
-    "OCE",
-    "TR",
-    "RU"
-  ]
+  "regions": {
+    "BR": {
+      "id": "BR1",
+      "host": "br.api.pvp.net"
+    },
+    "EUNE": {
+      "id": "EUN1",
+      "host": "eune.api.pvp.net"
+    },
+    "EUW": {
+      "id": "EUW1",
+      "host": "euw.api.pvp.net"
+    },
+    "KR": {
+      "id": "KR",
+      "host": "kr.api.pvp.net"
+    },
+    "LAN": {
+      "id": "LA1",
+      "host": "lan.api.pvp.net"
+    },
+    "LAS": {
+      "id": "LA2",
+      "host": "las.api.pvp.net"
+    },
+    "NA": {
+      "id": "NA1",
+      "host": "na.api.pvp.net"
+    },
+    "OCE": {
+      "id": "OC1",
+      "host": "oce.api.pvp.net"
+    },
+    "TR": {
+      "id": "TR1",
+      "host": "tr.api.pvp.net"
+    },
+    "RU": {
+      "id": "RU",
+      "host": "ru.api.pvp.net"
+    }
+  }
 }

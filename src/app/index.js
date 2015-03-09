@@ -28,7 +28,8 @@ angular.module('matchstats', ['matchstats.config', 'ngAnimate', 'ngTouch', 'ngSa
   })
   .config(function ($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-      .primaryPalette('light-blue');
+      .primaryPalette('light-blue')
+      .accentPalette('blue-grey');
   })
   .config(function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|javascript):/);

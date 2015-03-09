@@ -5,6 +5,9 @@
 
     function getMatchStats (region, matchId) {
 
+      $scope.loading = true;
+      $scope.chartDataError = false;
+      $scope.chartDataLoaded = false;
       cfService.clearFilters();
       cfService.clearData();
 
@@ -28,11 +31,14 @@
               ));
             }
           }
-          $scope.showChart = true;
+          $scope.loading = false;
+          $scope.chartDataLoaded = true;
         },
         function (response) {
           $log.error('Error loading match data.');
           $log.error(response);
+          $scope.loading = false;
+          $scope.chartDataError = true;
         }
       );
     }
@@ -43,6 +49,23 @@
         controller: 'BookmarkletCtrl',
       });
     }
+
+    $scope.showChart = function () {
+      return (!$scope.loading && !$scope.chartDataError && $scope.chartDataLoaded);
+    };
+
+    $scope.showInstructions = function () {
+      return (!$scope.loading && !$scope.chartDataLoaded && !$scope.chartDataError);
+    };
+
+    $scope.constructMatchDetailsUrl = function () {
+      var regionName = $scope.match.region,
+          regionId = regions[regionName].id;
+
+      return 'http://matchhistory.'+ regionName.toLowerCase() +
+        '.leagueoflegends.com/#match-details/'+ regionId +
+        '/'+ $scope.match.id;
+    };
 
     $scope.activeLaneFilter = 'ALL';
     $scope.activeStat = 'Creep Score';
@@ -58,13 +81,15 @@
     };
     $scope.showBookmarkletDialog = showBookmarkletDialog;
     $scope.match = { 'id': $stateParams.matchId };
-    $scope.showChart = false;
     $scope.dim = cfService.dim;
     $scope.chartPostSetup = cfService.chartPostSetup;
     $scope.regions = regions;
+    $scope.loading = false;
+    $scope.chartDataLoaded = false;
+    $scope.chartDataError = false;
 
     if (typeof($stateParams.region) === 'string' &&
-        regions.indexOf($stateParams.region.toUpperCase()) !== -1) {
+        $stateParams.region.toUpperCase() in regions) {
       $scope.match.region = $stateParams.region.toUpperCase();
     }
         
